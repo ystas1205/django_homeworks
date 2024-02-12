@@ -51,3 +51,6 @@ class AdvertisementSerializer(serializers.ModelSerializer):
             raise ValidationError('Больше 10 открытых обьявлений запрещено')
         return data
 
+
+
+

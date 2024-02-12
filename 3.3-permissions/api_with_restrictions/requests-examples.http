@@ -5,13 +5,14 @@
 # получение объявлений
 GET {{baseUrl}}/advertisements/
 Content-Type: application/json
+Authorization: Token 846804e0b34b043c70892ba1db01fb5bf1563fcc
 
 ###
 
 # создание объявления
 POST {{baseUrl}}/advertisements/
 Content-Type: application/json
-Authorization: Token 846804e0b34b043c70892ba1db01fb5bf1563fcc
+Authorization: Token 9a348086a4c9c51b7b6c1df413f7e7672385be98
 
 {
   "title": "Шкаф IKEA",
@@ -29,7 +30,14 @@ Authorization: Token 9a348086a4c9c51b7b6c1df413f7e7672385be98
   "status": "CLOSED"
 }
 ###
+# попытка поменять объявление DRAFT
+PATCH {{baseUrl}}/advertisements/140/
+Content-Type: application/json
+Authorization: Token 846804e0b34b043c70892ba1db01fb5bf1563fcc
 
+{
+  "status": "DRAFT"
+}
 
 
 ###
@@ -56,5 +64,5 @@ Content-Type: application/json
 ###
 
 # фильтрация по статусу
-GET {{baseUrl}}/advertisements/?search=closed
+GET {{baseUrl}}/advertisements/?search=open
 Content-Type: application/json
