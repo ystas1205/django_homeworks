@@ -11,7 +11,6 @@ class AdvertisementStatusChoices(models.TextChoices):
     DRAFT = "DRAFT", "Черновик"
 
 
-
 class Advertisement(models.Model):
     """Объявление."""
 
@@ -32,3 +31,14 @@ class Advertisement(models.Model):
         auto_now=True
     )
 
+
+# class Favorites(models.Model):
+#     user = models.ForeignKey(
+#         settings.AUTH_USER_MODEL,
+#         on_delete=models.CASCADE,
+#     )
+#     featured_ads = models.ForeignKey(
+#         Advertisement,
+#         on_delete=models.CASCADE,
+#         related_name='favorites',
+#     )

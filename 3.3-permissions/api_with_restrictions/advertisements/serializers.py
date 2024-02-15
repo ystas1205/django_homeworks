@@ -27,6 +27,16 @@ class AdvertisementSerializer(serializers.ModelSerializer):
         fields = ('id', 'title', 'description', 'creator',
                   'status', 'created_at',)
 
+
+# class Favorites(serializers.ModelSerializer):
+#     user = UserSerializer(
+#         read_only=True,
+#     )
+#
+#     class Meta:
+#         model = Advertisement
+#         fields = ('id', "user", "featured_ads",)
+
     def create(self, validated_data):
         """Метод для создания"""
         a = self.context["request"].user
@@ -50,7 +60,3 @@ class AdvertisementSerializer(serializers.ModelSerializer):
         if len(status_open) > 9 and data.get('status') is None:
             raise ValidationError('Больше 10 открытых обьявлений запрещено')
         return data
-
-
-
-

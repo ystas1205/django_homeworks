@@ -27,20 +27,45 @@ class AdvertisementViewSet(ModelViewSet):
     # другим пользователям оно недоступно
     def list(self, request, *args, **kwargs):
         user_id = request.user.id
-        queryset_open = self.filter_queryset(
-            self.get_queryset().filter(status="OPEN"))
-        queryset_closed = self.filter_queryset(
-            self.get_queryset().filter(status="CLOSED"))
-        queryset = (self.filter_queryset(
-            self.get_queryset().filter(creator__id=user_id,
-                                       status="DRAFT")) | queryset_open |
-                    queryset_closed)
+        queryset = self.filter_queryset(
+            self.get_queryset().filter(creator__id=user_id, status="DRAFT").
+            union(
+                self.filter_queryset(self.get_queryset().filter(status="OPEN").
+                union(self.filter_queryset(
+                    self.get_queryset().filter(status="CLOSED"))))))
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    def get_permissions(self):
+        # def list(self, request, *args, **kwargs):
+        #     user_id = request.user.id
+        #     queryset_open = self.filter_queryset(
+        #         self.get_queryset().filter(status="OPEN"))
+        #     queryset_closed = self.filter_queryset(
+        #         self.get_queryset().filter(status="CLOSED"))
+        #     queryset = (self.filter_queryset(
+        #         self.get_queryset().filter(creator__id=user_id,
+        #                                    status="DRAFT")) | queryset_open |
+        #                 queryset_closed)
+        #     serializer = self.get_serializer(queryset, many=True)
+        #     return Response(serializer.data)
+
         """Получение прав для действий."""
+
         if self.action in ["create", "update", "partial_update", 'destroy']:
             return [IsAuthenticated(), IsOwnerOrReadOnly()]
 
         return []
+
+    # @action(detail=True, methods=['post'])
+    # def favorites(self, request, pk=None):
+    #     user = self.get_object()
+    #     a = user
+
+    # serializer = PasswordSerializer(data=request.data)
+    # if serializer.is_valid():
+    #     user.set_password(serializer.validated_data['password'])
+    #     user.save()
+    #     return Response({'status': 'password set'})
+    # else:
+    #     return Response(serializer.errors,
+    #                     status=status.HTTP_400_BAD_REQUEST)
