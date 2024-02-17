@@ -5,7 +5,7 @@
 # получение объявлений
 GET {{baseUrl}}/advertisements/
 Content-Type: application/json
-# Authorization: Token 9a348086a4c9c51b7b6c1df413f7e7672385be98
+Authorization: Token 9a348086a4c9c51b7b6c1df413f7e7672385be98
 
 ###
 
@@ -17,6 +17,7 @@ Authorization: Token 9a348086a4c9c51b7b6c1df413f7e7672385be98
 {
   "title": "Шкаф IKEA",
   "description": "Срочно"
+  
 }
 
 ###
@@ -50,14 +51,14 @@ Authorization: Token 9a348086a4c9c51b7b6c1df413f7e7672385be98
 ###
 
 # фильтрация по создателю
-GET {{baseUrl}}/advertisements/?creator=3
+GET {{baseUrl}}/advertisements/?creator=2
 Content-Type: application/json
 
 ###
 
 
 # фильтрация по дате
-GET {{baseUrl}}/advertisements/?created_at_before=2020-10-01
+GET {{baseUrl}}/advertisements/?created_at_before=2022-10-01
 Content-Type: application/json
 
 
@@ -70,6 +71,19 @@ Content-Type: application/json
 
 ###
 # добавление в избранное
-POST {{baseUrl}}/advertisements/1/favorites/
+POST {{baseUrl}}/advertisements/166/favorites/
 Content-Type: application/json
 Authorization: Token 9a348086a4c9c51b7b6c1df413f7e7672385be98
+
+###
+# удаление из избранного
+DELETE {{baseUrl}}/advertisements/166/favorites/
+Content-Type: application/json
+Authorization: Token 9a348086a4c9c51b7b6c1df413f7e7672385be98
+
+###
+GET {{baseUrl}}/advertisements/filter/
+Content-Type: application/json
+Authorization: Token 9a348086a4c9c51b7b6c1df413f7e7672385be98
+
+

@@ -2,7 +2,7 @@ import django_filters
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from advertisements.models import Advertisement
+from advertisements.models import Advertisement, Favorites
 from rest_framework.exceptions import ValidationError
 
 
@@ -13,6 +13,9 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'first_name',
                   'last_name',)
+
+
+
 
 
 class AdvertisementSerializer(serializers.ModelSerializer):
@@ -26,16 +29,6 @@ class AdvertisementSerializer(serializers.ModelSerializer):
         model = Advertisement
         fields = ('id', 'title', 'description', 'creator',
                   'status', 'created_at',)
-
-
-# class Favorites(serializers.ModelSerializer):
-#     user = UserSerializer(
-#         read_only=True,
-#     )
-#
-#     class Meta:
-#         model = Advertisement
-#         fields = ('id', "user", "featured_ads",)
 
     def create(self, validated_data):
         """Метод для создания"""
@@ -60,3 +53,12 @@ class AdvertisementSerializer(serializers.ModelSerializer):
         if len(status_open) > 9 and data.get('status') is None:
             raise ValidationError('Больше 10 открытых обьявлений запрещено')
         return data
+
+class FavoritesSerializer(serializers.ModelSerializer):
+    ads= AdvertisementSerializer(
+        read_only=True
+    )
+
+    class Meta:
+        model = Favorites
+        fields = ["user","featured_ads","ads"]

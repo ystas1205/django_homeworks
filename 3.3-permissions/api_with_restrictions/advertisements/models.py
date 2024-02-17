@@ -32,13 +32,20 @@ class Advertisement(models.Model):
     )
 
 
-# class Favorites(models.Model):
-#     user = models.ForeignKey(
-#         settings.AUTH_USER_MODEL,
-#         on_delete=models.CASCADE,
-#     )
-#     featured_ads = models.ForeignKey(
-#         Advertisement,
-#         on_delete=models.CASCADE,
-#         related_name='favorites',
-#     )
+class Favorites(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+    featured_ads = models.ForeignKey(
+        Advertisement,
+        on_delete=models.CASCADE,
+        related_name='favorites',
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["user", "featured_ads"],
+                                    name="unique favorite adv")]
+
+
