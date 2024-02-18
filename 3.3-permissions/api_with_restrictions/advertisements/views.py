@@ -35,11 +35,9 @@ class AdvertisementViewSet(ModelViewSet):
         user_id = request.user.id
         queryset = self.filter_queryset(
             self.get_queryset().filter(creator__id=user_id, status="DRAFT")
-            | (
-                self.filter_queryset(
-                    self.get_queryset().filter(status="OPEN") |
-                    self.filter_queryset(
-                        self.get_queryset().filter(status="CLOSED")))))
+            | (self.filter_queryset(self.get_queryset().filter(status="OPEN")
+                                    | self.filter_queryset(
+                self.get_queryset().filter(status="CLOSED")))))
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 

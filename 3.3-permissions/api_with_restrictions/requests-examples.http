@@ -77,7 +77,7 @@ Authorization: Token 846804e0b34b043c70892ba1db01fb5bf1563fcc
 
 ###
 # удаление из избранного
-DELETE {{baseUrl}}/advertisements/2/favorites/
+DELETE {{baseUrl}}/advertisements/201/favorites/
 Content-Type: application/json
 Authorization: Token 846804e0b34b043c70892ba1db01fb5bf1563fcc
 
