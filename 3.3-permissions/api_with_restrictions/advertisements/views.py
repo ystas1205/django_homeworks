@@ -15,7 +15,7 @@ from advertisements.permissions import IsOwnerOrReadOnly
 from advertisements.filters import AdvertisementFilter
 
 
-class HTTPMethod:
+class DoesNotExist:
     pass
 
 
@@ -34,7 +34,8 @@ class AdvertisementViewSet(ModelViewSet):
     def list(self, request, *args, **kwargs):
         user_id = request.user.id
         queryset = self.filter_queryset(
-            self.get_queryset().filter(creator__id=user_id, status="DRAFT") | (
+            self.get_queryset().filter(creator__id=user_id, status="DRAFT")
+            | (
                 self.filter_queryset(
                     self.get_queryset().filter(status="OPEN") |
                     self.filter_queryset(
@@ -42,8 +43,8 @@ class AdvertisementViewSet(ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
+    def get_permissions(self):
         """Получение прав для действий."""
-
         if self.action in ["create", "update", "partial_update", 'destroy']:
             return [IsAuthenticated(), IsOwnerOrReadOnly()]
 
@@ -52,31 +53,49 @@ class AdvertisementViewSet(ModelViewSet):
     # Возможность добавлять объявления в избранное
     @action(detail=True, methods=['post', 'delete'])
     def favorites(self, request, pk):
-        # user = request.user
-        adv = Advertisement.objects.get(id=pk)
-        favorite_ads = Favorites.objects.filter(featured_ads=pk)
-        b = adv.creator
-        if not self.request.user.is_authenticated:
-            return Response(
-                {
-                    'message': 'Вы не авторизованы'},
-                status=status.HTTP_400_BAD_REQUEST)
-        if request.user == b:
-            return Response(
-                {
-                    'message': 'Автор объявления не может добавить или удалить'
-                               ' своё объявление'},
-                status=status.HTTP_400_BAD_REQUEST)
+        global user_avd
 
         if request.method == "POST":
+            try:
+                adv = Advertisement.objects.get(id=pk)
+                user_avd = adv.creator
+            except Advertisement.DoesNotExist:
+                adv = None
+
+            if adv is None:
+                return Response(
+                    {
+                        'message': 'Такого обявления нет'},
+                    status=status.HTTP_404_NOT_FOUND)
+
+            if request.user == user_avd:
+                return Response(
+                    {
+                        'message': 'Автор объявления не может добавить'
+                                   ' своё объявление'},
+                    status=status.HTTP_400_BAD_REQUEST)
+
             Favorites.objects.update_or_create(user=request.user,
                                                featured_ads=adv)
-            return Response({'status': 'Обьявление добавлено в избранное'})
+            return Response({'status': 'Обьявление добавлено в избранное'},
+                            status=status.HTTP_201_CREATED)
 
         if request.method == "DELETE":
+            try:
+                favorite_ads = Favorites.objects.get(featured_ads=pk)
+            except Favorites.DoesNotExist:
+                favorite_ads = None
+
+            if favorite_ads is None:
+                return Response(
+                    {
+                        'message': 'Такого обявления нет в избранных'},
+                    status=status.HTTP_404_NOT_FOUND)
+
             favorite_ads.delete()
-            #  Favorites.objects.filter(featured_ads=pk).delete()
-            return Response({'status': 'Обьявление удалено из избранных'})
+
+            return Response({'status': 'Обьявление удалено из избранных'},
+                            status=status.HTTP_204_NO_CONTENT)
 
     # Фильтрации по избранным объявлениям.
     @action(detail=False, methods=['get'])
